@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   floatingHeader: {
     position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100,
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
-    paddingTop: 20, paddingHorizontal: 15, paddingBottom: 10,
+    paddingTop: 2, paddingHorizontal: 15, paddingBottom: 2,
     backgroundColor: '#FFFFFF', 
     borderBottomWidth: 1, 
     borderBottomColor: '#E5E7EB',
@@ -334,8 +334,8 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB'
   },
   
-  mainContent: { flex: 1, flexDirection: 'column', marginTop: 130 },
-  mainContentLandscape: { flexDirection: 'row', marginTop: 70 }, 
+  mainContent: { flex: 1, flexDirection: 'column', marginTop: 150 },
+  mainContentLandscape: { flexDirection: 'row', marginTop: 40 }, 
   
   mapContainer: { flex: 0.7, backgroundColor: '#E5E7EB' },
   mapContainerLandscape: { flex: 0.65 },
