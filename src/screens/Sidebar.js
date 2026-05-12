@@ -103,12 +103,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)', // Sedikit lebih gelap untuk kontras
+    backgroundColor: 'rgba(0,0,0,0.4)',
   },
   sidebarContainer: {
     width: width * 0.75,
     height: '100%',
-    backgroundColor: '#FFFFFF', // Putih
+    backgroundColor: '#FFFFFF', 
     paddingTop: 10,
     shadowColor: '#000',
     shadowOffset: { width: 2, height: 0 },
@@ -123,12 +123,12 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   appName: {
-    color: '#111827', // Hitam
+    color: '#111827', 
     fontSize: 20,
     fontWeight: 'bold',
   },
   appSub: {
-    color: '#6B7280', // Abu-abu
+    color: '#6B7280', 
     fontSize: 12,
     marginTop: 4,
   },
