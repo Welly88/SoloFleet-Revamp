@@ -1,0 +1,78 @@
+{
+  "expo": {
+    "name": "Development-SoloFleet",
+    "slug": "Development-SoloFleet",
+    "owner": "Development-SoloFleet",
+    "version": "1.0.0",
+    "orientation": "default", 
+    "icon": "./assets/newicon.png",
+    "scheme": "Development-SoloFleet",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "notification": {
+      "icon": "./assets/newicon.png",
+      "color": "#06B6D4",
+      "androidMode": "default",
+      "androidCollapsedTitle": "Development-SoloFleet"
+    },
+    "android": {
+      "package": "com.development.SoloFleet",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/new-adaptive-icon.png",
+        "backgroundColor": "#0F172A"
+      },
+      "runtimeVersion": "1.0.0"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      },
+      "bundleIdentifier": "com.development.SoloFleet",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35,
+            "buildToolsVersion": "35.0.0",
+            "newArchEnabled": true
+          },
+          "ios": {
+            "newArchEnabled": true
+          }
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/images/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      "expo-font",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#06B6D4"
+        }
+      ],
+      "expo-web-browser"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}
