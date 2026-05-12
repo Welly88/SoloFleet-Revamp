@@ -16,11 +16,13 @@ import { WebView } from 'react-native-webview';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getVehicleData, logout, getCompanyId } from '../api/auth';
 import Sidebar from './Sidebar'; 
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const HomeScreen = ({ onLogout }) => {
   const { width, height } = useWindowDimensions();
-  const isLandscape = width > height; // Deteksi orientasi landscape
+  const isLandscape = width > height;
 
+  // State
   const [userCompanyId, setUserCompanyId] = useState(null);
   const [userName, setUserName] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -33,6 +35,23 @@ const HomeScreen = ({ onLogout }) => {
   const [activeMenu, setActiveMenu] = useState('dashboard');
   const webViewRef = useRef(null);
   const intervalRef = useRef(null);
+
+
+  useEffect(() => {
+    const setOrientation = async () => {
+      if (activeMenu === 'dashboard') {
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+      } else {
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+      }
+    };
+
+    setOrientation();
+
+    return () => {
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
+    };
+  }, [activeMenu]); 
 
   useEffect(() => {
     const loadCompanyId = async () => {
@@ -85,6 +104,8 @@ const HomeScreen = ({ onLogout }) => {
       { text: 'Batal', style: 'cancel' },
       { text: 'Logout', style: 'destructive', onPress: async () => {
         await logout();
+        // Kunci kembali ke Portrait saat logout
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
         onLogout();
       }},
     ]);
@@ -99,7 +120,6 @@ const HomeScreen = ({ onLogout }) => {
     }).filter(Boolean);
   };
 
-  // Leaflet HTML dengan tema terang
   const leafletHtml = `
     <!DOCTYPE html>
     <html>
@@ -119,7 +139,6 @@ const HomeScreen = ({ onLogout }) => {
         window.updateMarkers = function(markersJson) {
           var data = JSON.parse(markersJson); markersLayer.clearLayers();
           data.forEach(function(v) {
-            // Marker biru untuk tema terang
             var marker = L.circleMarker([v.lat, v.lng], { radius: 8, fillColor: "#2563EB", color: "#fff", weight: 2, opacity: 1, fillOpacity: 0.9 }).addTo(markersLayer);
             marker.bindPopup('<b style="color:#000">' + v.label + '</b>');
             marker.on('click', function() { window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'SELECT_VEHICLE', id: v.id })); });
@@ -170,7 +189,6 @@ const HomeScreen = ({ onLogout }) => {
 
     return (
       <>
-        {/* Search Bar - Hanya tampil di Portrait, di Landscape akan menjadi header list */}
         {!isLandscape && (
           <View style={styles.searchOverlay}>
             <TextInput 
@@ -201,7 +219,6 @@ const HomeScreen = ({ onLogout }) => {
             <View style={[styles.tableContainer, isLandscape && styles.tableContainerLandscape]}>
               <View style={styles.tableHeader}>
                 <Text style={styles.tableHeaderText}>Vehicle List ({filteredData.length})</Text>
-                {/* Input Search di dalam List untuk Landscape */}
                 {isLandscape && (
                    <TextInput 
                    style={styles.searchInputInline} 
@@ -216,7 +233,7 @@ const HomeScreen = ({ onLogout }) => {
                 data={filteredData} 
                 keyExtractor={item => item.vehicleid} 
                 renderItem={renderTableItem} 
-                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563EB" />} 
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#2563EB" colors={["#2563EB"]} />} 
                 ListEmptyComponent={<Text style={styles.emptyText}>No Vehicles Found</Text>} 
                 contentContainerStyle={styles.tableListContent} 
               />
@@ -249,7 +266,6 @@ const HomeScreen = ({ onLogout }) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.floatingHeader}>
         <TouchableOpacity onPress={() => setIsSidebarOpen(true)} style={styles.hamburgerBtn}>
             <Text style={styles.hamburgerIcon}>☰</Text>
@@ -275,10 +291,10 @@ const HomeScreen = ({ onLogout }) => {
   );
 };
 
-// STYLES LIGHT THEME
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F3F4F6' }, // Light Gray Background
-  textDark: { color: '#111827' }, // Dark Text utility
+  container: { flex: 1, backgroundColor: '#F3F4F6' },
+  textDark: { color: '#111827' },
   
   floatingHeader: {
     position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100,
@@ -286,9 +302,9 @@ const styles = StyleSheet.create({
     paddingTop: 20, paddingHorizontal: 15, paddingBottom: 10,
     backgroundColor: '#FFFFFF', 
     borderBottomWidth: 1, 
-    borderBottomColor: '#E5E7EB', // Soft border
-    elevation: 5, // Shadow for Android
-    shadowColor: '#000', // Shadow for iOS
+    borderBottomColor: '#E5E7EB',
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -303,10 +319,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF', borderRadius: 10, paddingLeft: 15, height: 45, 
     justifyContent: 'center', 
     elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
     borderWidth: 1,
     borderColor: '#E5E7EB'
   },
@@ -322,11 +334,10 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB'
   },
   
-  // Main Content Layouts
   mainContent: { flex: 1, flexDirection: 'column', marginTop: 130 },
-  mainContentLandscape: { flexDirection: 'row', marginTop: 70 }, // Header height adjust for landscape
+  mainContentLandscape: { flexDirection: 'row', marginTop: 70 }, 
   
-  mapContainer: { flex: 0.7, backgroundColor: '#E5E7EB' }, // Light map bg
+  mapContainer: { flex: 0.7, backgroundColor: '#E5E7EB' },
   mapContainerLandscape: { flex: 0.65 },
   map: { width: '100%', height: '100%' },
   mapLoading: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F3F4F6' },
@@ -344,9 +355,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     borderRadius: 8,
     marginBottom: 5,
-    backgroundColor: '#FFFFFF' // Default white
+    backgroundColor: '#FFFFFF'
   },
-  tableRowSelected: { backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE' }, // Light blue highlight
+  tableRowSelected: { backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#BFDBFE' },
   tableCellMain: { flex: 1, marginRight: 5 },
   tableCellTitle: { fontSize: 13, fontWeight: '600' },
   tableCellSub: { color: '#6B7280', fontSize: 11, marginTop: 1 },
